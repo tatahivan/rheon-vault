@@ -22,16 +22,16 @@ const VAULT_DATA = {
 };
 
 const ACTIVE_TRADES = [
-  { tradeId: "TRD-2026-0002", commodity: "PMS (Gasoline)", amount: 6375000, buyer: "Oando Energy", exporter: "Trafigura Pte", status: "Funded", daysActive: 3, tenor: 25, yieldRate: 1.75, inspector: "Bureau Veritas", terms: "CIF Apapa", expiresAt: "2026-03-25" },
-  { tradeId: "TRD-2026-0003", commodity: "AGO (Diesel)", amount: 5400000, buyer: "MRS Oil & Gas", exporter: "Mercuria Energy", status: "Created", daysActive: 0, tenor: 30, yieldRate: 2.0, inspector: "Intertek", terms: "FOB Rotterdam", expiresAt: "2026-03-30" },
+  { tradeId: "TRD-2026-0002", commodity: "Refined Petroleum", amount: 6375000, region: "West Africa", status: "Funded", daysActive: 3, tenor: 25, inspector: "Bureau Veritas", expiresAt: "2026-03-25" },
+  { tradeId: "TRD-2026-0003", commodity: "Refined Petroleum", amount: 5400000, region: "West Africa", status: "Created", daysActive: 0, tenor: 30, inspector: "Intertek", expiresAt: "2026-03-30" },
 ];
 
 const RECENT_RETURNS = [
-  { tradeId: "TRD-2026-0001", commodity: "ULSD 10ppm", principal: 7500000, yield: 112500, returnPct: 1.5, cycleTime: 11, date: "2026-03-01" },
-  { tradeId: "TRD-2026-0098", commodity: "Palm Oil", principal: 4200000, yield: 73500, returnPct: 1.75, cycleTime: 16, date: "2026-02-25" },
-  { tradeId: "TRD-2026-0095", commodity: "Urea", principal: 3800000, yield: 57000, returnPct: 1.5, cycleTime: 12, date: "2026-02-18" },
-  { tradeId: "TRD-2026-0091", commodity: "ULSD 10ppm", principal: 8000000, yield: 160000, returnPct: 2.0, cycleTime: 14, date: "2026-02-10" },
-  { tradeId: "TRD-2026-0087", commodity: "AGO (Diesel)", principal: 5500000, yield: 82500, returnPct: 1.5, cycleTime: 13, date: "2026-02-03" },
+  { tradeId: "TRD-2026-0001", commodity: "Refined Petroleum", principal: 7500000, yield: 112500, cycleTime: 11, date: "2026-03-01" },
+  { tradeId: "TRD-2026-0098", commodity: "Edible Oils", principal: 4200000, yield: 73500, cycleTime: 16, date: "2026-02-25" },
+  { tradeId: "TRD-2026-0095", commodity: "Fertiliser", principal: 3800000, yield: 57000, cycleTime: 12, date: "2026-02-18" },
+  { tradeId: "TRD-2026-0091", commodity: "Refined Petroleum", principal: 8000000, yield: 160000, cycleTime: 14, date: "2026-02-10" },
+  { tradeId: "TRD-2026-0087", commodity: "Refined Petroleum", principal: 5500000, yield: 82500, cycleTime: 13, date: "2026-02-03" },
 ];
 
 const TX_HISTORY = [
@@ -247,7 +247,7 @@ function VaultPage({ wallet, userShares, onConnect }) {
                 <div><span style={{ fontSize: 13, fontWeight: 700, color: "#1B2A4A" }}>{t.tradeId}</span><span style={{ fontSize: 12, color: "#8895A7", marginLeft: 8 }}>{t.commodity}</span></div>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#7B1FA2" }}>{fmt(t.amount)}</span>
               </div>
-              <div style={{ fontSize: 12, color: "#8895A7" }}>{t.buyer} \u2022 {t.status} \u2022 {t.daysActive > 0 ? `Day ${t.daysActive}` : "Awaiting funding"}</div>
+              <div style={{ fontSize: 12, color: "#8895A7" }}>{t.region} \u2022 {t.status} \u2022 {t.daysActive > 0 ? `Day ${t.daysActive}` : "Awaiting funding"}</div>
             </div>
           ))}
         </div>
@@ -261,7 +261,7 @@ function VaultPage({ wallet, userShares, onConnect }) {
                 <div><span style={{ fontSize: 13, fontWeight: 700, color: "#1B2A4A" }}>{t.tradeId}</span><span style={{ fontSize: 12, color: "#8895A7", marginLeft: 8 }}>{t.commodity}</span></div>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#2E7D32" }}>+{fmt(t.yield)}</span>
               </div>
-              <div style={{ fontSize: 12, color: "#8895A7" }}>{fmt(t.principal)} \u2022 {t.returnPct}% in {t.cycleTime}d \u2022 {t.date}</div>
+              <div style={{ fontSize: 12, color: "#8895A7" }}>{fmt(t.principal)} deployed \u2022 {t.cycleTime} days \u2022 {t.date}</div>
             </div>
           ))}
         </div>
@@ -297,7 +297,7 @@ function TradesPage() {
                 <span style={{ fontSize: 15, fontWeight: 700, color: "#1B2A4A" }}>{t.tradeId}</span>
                 <Badge state={t.status} />
               </div>
-              <div style={{ fontSize: 13, color: "#8895A7" }}>{t.commodity} \u2022 {t.terms}</div>
+              <div style={{ fontSize: 13, color: "#8895A7" }}>{t.commodity} \u2022 {t.region}</div>
             </div>
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#1B2A4A" }}>{fmtFull(t.amount)}</div>
@@ -305,13 +305,11 @@ function TradesPage() {
             </div>
           </div>
           <div style={{ display: "flex", gap: 20, fontSize: 12, color: "#8895A7", marginBottom: 12, flexWrap: "wrap" }}>
-            <span><strong style={{ color: "#3D5A80" }}>Buyer:</strong> {t.buyer}</span>
-            <span><strong style={{ color: "#3D5A80" }}>Exporter:</strong> {t.exporter}</span>
-            <span><strong style={{ color: "#3D5A80" }}>Inspector:</strong> {t.inspector}</span>
+            <span><strong style={{ color: "#3D5A80" }}>Region:</strong> {t.region}</span>
+            <span><strong style={{ color: "#3D5A80" }}>Inspection:</strong> {t.inspector}</span>
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             {[
-              ["Yield Rate", `${t.yieldRate}%`],
               ["Tenor", `${t.tenor} days`],
               ["Day", t.daysActive > 0 ? `${t.daysActive} of ${t.tenor}` : "Pending"],
               ["Expires", t.expiresAt],
@@ -339,7 +337,6 @@ function TradesPage() {
           </div>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: "#2E7D32" }}>+{fmtFull(t.yield)}</div>
-            <div style={{ fontSize: 11, color: "#8895A7" }}>{t.returnPct}% return</div>
           </div>
         </div>
       ))}
@@ -507,4 +504,3 @@ export default function App() {
     <div style={{ flex: 1, padding: 28, overflowY: "auto", maxHeight: "100vh" }}>{renderPage()}</div>
   </div>);
 }
-
